@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gen-Z Life Simulator - Java 逐行代码详解</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-code { font-family: 'JetBrains Mono', monospace; }
+        pre {
+            background-color: #1e293b; /* bg-slate-800 */
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            border: 1px solid #334155; /* border-slate-700 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        code { font-size: 0.9rem; line-height: 1.8; }
+        .comment { color: #94a3b8; font-style: italic; } /* slate-400 */
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 flex flex-col items-center min-h-screen p-4 md:p-8">
+
+    <div class="w-full max-w-7xl mx-auto">
+        <header class="text-center mb-8 md:mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-cyan-400 mb-2">Gen-Z Life Simulator</h1>
+            <p class="text-xl text-slate-300">Java 源代码 · 最终完整 · 逐行详解版</p>
+        </header>
+
+        <main>
+            <div class="bg-slate-800 p-6 rounded-2xl shadow-2xl border-2 border-slate-700">
+                <p class="text-slate-300 mb-6">
+                    下方是整个项目的<strong>全部（100%）</strong>源代码。所有五个 <code>.java</code> 文件已合并，并附上了我能做到的最详尽的<strong>逐行中英双语注释</strong>。
+                </p>
+                
+                <pre class="font-code"><code class="language-java">
+<span class="comment">// English: Import statements bring in pre-written Java code from libraries.
+// Chinese: 'import' 语句从代码库中引入预先编写好的Java代码。</span>
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Random;
+
+<span class="comment">// =================================================================================
+// English: File 1: GenZLifeSimulator.java - The starting point of the application.
+// Chinese: 文件一: GenZLifeSimulator.java - 应用程序的起点。
+// =================================================================================</span>
+
+<span class="comment">// English: A 'public class' must have the same name as the .java file.
+// Chinese: 'public class' 的名称必须与 .java 文件名相同。</span>
+public class GenZLifeSimulator {
+
+    <span class="comment">// English: 'public static void main(String[] args)' is the universal entry point for any Java program.
+    // Chinese: 'public static void main(String[] args)' 是任何Java程序的通用入口点。</span>
+    public static void main(String[] args) {
+        <span class="comment">// English: Create a new 'Scanner' object to read input from the console (System.in).
+        // Chinese: 创建一个新的 'Scanner' 对象，用于从控制台 (System.in) 读取输入。</span>
+        Scanner scanner = new Scanner(System.in);
+
+        <span class="comment">// English: Call the static method 'printWelcomeScreen' to display a greeting.
+        // Chinese: 调用静态方法 'printWelcomeScreen' 来显示欢迎语。</span>
+        printWelcomeScreen();
+
+        <span class="comment">// English: Call 'promptForName' to get the player's name and store it in the 'playerName' variable.
+        // Chinese: 调用 'promptForName' 获取玩家姓名，并将其存储在 'playerName' 变量中。</span>
+        String playerName = promptForName(scanner);
+
+        <span class="comment">// English: Call 'generateStudentID' to create a unique ID and store it.
+        // Chinese: 调用 'generateStudentID' 创建一个唯一的ID并存储它。</span>
+        String studentID = generateStudentID();
+
+        <span class="comment">// English: Create an instance (object) of the 'Student' class, passing the name and ID to its constructor.
+        // Chinese: 创建 'Student' 类的一个实例（对象），并将姓名和ID传递给其构造函数。</span>
+        Student thePlayer = new Student(playerName, studentID);
+
+        System.out.println("\n=== STUDENT CREATED ===");
+        System.out.println("Name: " + thePlayer.getName());
+        System.out.println("Student ID: " + thePlayer.getId());
+        System.out.println("\nStarting Stats:");
+        System.out.println(thePlayer.getStatsString());
+
+        <span class="comment">// English: Create an instance of the 'Simulator' class, our game engine.
+        // Chinese: 创建 'Simulator' 类的一个实例，即我们的游戏引擎。</span>
+        Simulator gameSimulator = new Simulator(thePlayer, scanner);
+        <span class="comment">// English: Call the 'setup' method on the simulator to configure game settings like difficulty.
+        // Chinese: 调用模拟器上的 'setup' 方法来配置游戏设置，如难度。</span>
+        gameSimulator.setup();
+
+        <span class="comment">// English: Call the 'run' method to start the main game loop.
+        // Chinese: 调用 'run' 方法来启动主游戏循环。</span>
+        gameSimulator.run();
+
+        <span class="comment">// English: After the game is over, close the scanner to release system resources.
+        // Chinese: 游戏结束后，关闭扫描器以释放系统资源。</span>
+        scanner.close();
+    }
+
+    <span class="comment">// English: A private static method to print the welcome message.
+    // Chinese: 一个私有的静态方法，用于打印欢迎信息。</span>
+    private static void printWelcomeScreen() {
+        System.out.println("========================================");
+        System.out.println("   WELCOME TO GEN-Z LIFE SIMULATOR!    ");
+        System.out.println("========================================");
+        System.out.println();
+        System.out.println("You're a fresh uni student trying to survive a week");
+        System.out.println("of classes, work shifts, Netflix binges, and parties.");
+        System.out.println();
+    }
+
+    <span class="comment">// English: A private static method to prompt for and validate the player's name.
+    // Chinese: 一个私有的静态方法，用于提示并验证玩家的姓名。</span>
+    private static String promptForName(Scanner scanner) {
+        <span class="comment">// English: Initialize an empty string to hold the name.
+        // Chinese: 初始化一个空字符串来存放姓名。</span>
+        String name = "";
+        <span class="comment">// English: Initialize a boolean flag to control the input loop.
+        // Chinese: 初始化一个布尔标志来控制输入循环。</span>
+        boolean nameIsValid = false;
+
+        <span class="comment">// English: A 'while' loop that continues until a valid name is entered.
+        // Chinese: 一个 'while' 循环，直到输入了有效的姓名才会停止。</span>
+        while (!nameIsValid) {
+            System.out.print("Enter your name: ");
+            <span class="comment">// English: Read the next line of input and remove leading/trailing whitespace with '.trim()'.
+            // Chinese: 读取下一行输入，并用 '.trim()' 移除前导和尾随的空格。</span>
+            name = scanner.nextLine().trim();
+
+            <span class="comment">// English: Check if the name string is empty after trimming.
+            // Chinese: 检查修剪后的姓名字符串是否为空。</span>
+            if (name.isEmpty()) {
+                System.out.println("Come on, you gotta enter something! Try again.");
+            } else {
+                <span class="comment">// English: If it's not empty, set the flag to true to exit the loop.
+                // Chinese: 如果不为空，将标志设置为 true 以退出循环。</span>
+                nameIsValid = true;
+            }
+        }
+        <span class="comment">// English: Return the validated name string.
+        // Chinese: 返回已验证的姓名字符串。</span>
+        return name;
+    }
+
+    <span class="comment">// English: A private static method to generate a student ID.
+    // Chinese: 一个私有的静态方法，用于生成学生ID。</span>
+    private static String generateStudentID() {
+        <span class="comment">// English: Get the current system time in milliseconds since 1970.
+        // Chinese: 获取自1970年以来当前系统时间的毫秒数。</span>
+        long currentTime = System.currentTimeMillis();
+        <span class="comment">// English: Convert the long integer to a String.
+        // Chinese: 将长整型数字转换为字符串。</span>
+        String timeString = String.valueOf(currentTime);
+        <span class="comment">// English: Get the last 8 characters of the time string.
+        // Chinese: 获取时间字符串的最后8个字符。</span>
+        String idSuffix = timeString.substring(timeString.length() - 8);
+        <span class="comment">// English: Concatenate "STU" with the suffix and return it.
+        // Chinese: 将 "STU" 与后缀拼接并返回。</span>
+        return "STU" + idSuffix;
+    }
+}
+
+<span class="comment">// =================================================================================
+// English: File 2: Simulator.java - The game engine managing loops and logic.
+// Chinese: 文件二: Simulator.java - 管理游戏循环和逻辑的游戏引擎。
+// =================================================================================</span>
+
+class Simulator {
+    <span class="comment">// English: 'private final' fields are set once in the constructor and cannot be changed.
+    // Chinese: 'private final' 字段在构造函数中设置一次后便不能更改。</span>
+    private final Student player;
+    private final Random random;
+    private final Scanner scanner;
+
+    <span class="comment">// English: 'private' fields that will be assigned values during setup.
+    // Chinese: 'private' 字段，将在设置阶段被赋值。</span>
+    private Perk chosenPerk;
+    private Difficulty gameDifficulty;
+
+    <span class="comment">// English: An integer array to count each type of event.
+    // Chinese: 一个整型数组，用于计算每种类型的事件。</span>
+    private int[] eventCounts;
+
+    <span class="comment">// English: 'private static final' fields are constants for game rules.
+    // Chinese: 'private static final' 字段是用于游戏规则的常量。</span>
+    private static final int TOTAL_DAYS = 7;
+    private static final int MAX_ACTIVITIES_PER_DAY = 2;
+    private static final int CRASH_ENERGY_RECOVERY = 10;
+    private static final int CRASH_GRADES_PENALTY = -10;
+    private static final int CRASH_HAPPINESS_PENALTY = -10;
+    private static final int CRASH_MONEY_PENALTY = -10;
+    private static final int BURNOUT_DAYS = 3;
+    private static final int ACADEMIC_FAILURE_DAYS = 3;
+    private static final int EXHAUSTION_DAYS = 2;
+
+    <span class="comment">// English: An 'enum' for defining a set of named constants for game difficulties.
+    // Chinese: 'enum' (枚举) 用于定义一组游戏难度的命名常量。</span>
+    public enum Difficulty {
+        EASY("Easy", 150, 0.5),
+        NORMAL("Normal", 100, 1.0),
+        HARD("Hard", 50, 1.5);
+
+        private final String displayName;
+        private final int startingMoney;
+        private final double mishapMultiplier;
+
+        Difficulty(String displayName, int startingMoney, double mishapMultiplier) {
+            this.displayName = displayName;
+            this.startingMoney = startingMoney;
+            this.mishapMultiplier = mishapMultiplier;
+        }
+        public String getDisplayName() { return displayName; }
+        public int getStartingMoney() { return startingMoney; }
+        public double getMishapMultiplier() { return mishapMultiplier; }
+    }
+
+    <span class="comment">// English: An 'interface' defines a contract. Any class that 'implements' Perk MUST provide these methods.
+    // Chinese: 'interface' (接口) 定义了一个契约。任何 'implements' (实现) Perk 的类都必须提供这些方法。</span>
+    public interface Perk {
+        String getName();
+        String getDescription();
+        void applyBonus(Event.EventType eventType, Student student);
+    }
+
+    <span class="comment">// English: 'static inner classes' that implement the Perk interface.
+    // Chinese: 实现 Perk 接口的 '静态内部类'。</span>
+    public static class AcademicGeniusPerk implements Perk {
+        private static final int BONUS_GRADES = 5;
+        public String getName() { return "Academic Genius"; }
+        public String getDescription() { return "Gain +5 extra grades whenever you study"; }
+        public void applyBonus(Event.EventType eventType, Student student) {
+            if (eventType == Event.EventType.STUDY) student.addGrades(BONUS_GRADES);
+        }
+    }
+    public static class SocialButterflyPerk implements Perk {
+        private static final int BONUS_HAPPINESS = 5;
+        public String getName() { return "Social Butterfly"; }
+        public String getDescription() { return "Gain +5 extra happiness from social activities"; }
+        public void applyBonus(Event.EventType eventType, Student student) {
+            if (eventType == Event.EventType.SOCIAL) student.addHappiness(BONUS_HAPPINESS);
+        }
+    }
+    public static class HardWorkerPerk implements Perk {
+        private static final int BONUS_MONEY = 15;
+        public String getName() { return "Hard Worker"; }
+        public String getDescription() { return "Earn +$15 extra from work shifts"; }
+        public void applyBonus(Event.EventType eventType, Student student) {
+            if (eventType == Event.EventType.WORK) student.addMoney(BONUS_MONEY);
+        }
+    }
+    public static class WellnessGuruPerk implements Perk {
+        private static final int BONUS_ENERGY = 5;
+        public String getName() { return "Wellness Guru"; }
+        public String getDescription() { return "Gain +5 extra energy from self-care activities"; }
+        public void applyBonus(Event.EventType eventType, Student student) {
+            if (eventType == Event.EventType.SELF_CARE) student.addEnergy(BONUS_ENERGY);
+        }
+    }
+
+    <span class="comment">// English: The constructor for the Simulator class.
+    // Chinese: Simulator 类的构造函数。</span>
+    public Simulator(Student player, Scanner scanner) {
+        this.player = player;
+        this.scanner = scanner;
+        this.random = new Random();
+        this.eventCounts = new int[Event.EventType.values().length];
+    }
+
+    <span class="comment">// English: A public method to handle the pre-game setup phase.
+    // Chinese: 一个处理游戏前设置阶段的公共方法。</span>
+    public void setup() {
+        selectDifficulty();
+        selectPerk();
+    }
+
+    <span class="comment">// English: A private method to handle difficulty selection logic.
+    // Chinese: 一个处理难度选择逻辑的私有方法。</span>
+    private void selectDifficulty() {
+        System.out.println("\n=== SELECT DIFFICULTY ===");
+        System.out.println("1. Easy (Start with $150, 50% less mishaps)");
+        System.out.println("2. Normal (Start with $100, normal mishaps)");
+        System.out.println("3. Hard (Start with $50, 50% more mishaps)");
+        <span class="comment">// English: Get a validated integer input from the user between 1 and 3.
+        // Chinese: 从用户处获取一个介于1和3之间的、经过验证的整数输入。</span>
+        int choice = getValidatedInput("Choose difficulty (1-3): ", 1, 3);
+
+        if (choice == 1) {
+            gameDifficulty = Difficulty.EASY;
+        } else if (choice == 2) {
+            gameDifficulty = Difficulty.NORMAL;
+        } else {
+            gameDifficulty = Difficulty.HARD;
+        }
+        <span class="comment">// English: Adjust the player's money based on the chosen difficulty.
+        // Chinese: 根据所选难度调整玩家的资金。</span>
+        int moneyAdjustment = gameDifficulty.getStartingMoney() - 100;
+        player.addMoney(moneyAdjustment);
+        System.out.println("Difficulty set to: " + gameDifficulty.getDisplayName());
+    }
+    
+    <span class="comment">// English: A private method to handle perk selection.
+    // Chinese: 一个处理特长选择的私有方法。</span>
+    private void selectPerk() {
+        System.out.println("\n=== SELECT YOUR PERK ===");
+        System.out.println("1. Academic Genius - Gain +5 extra grades from study");
+        System.out.println("2. Social Butterfly - Gain +5 extra happiness from socializing");
+        System.out.println("3. Hard Worker - Earn +$15 extra from work");
+        System.out.println("4. Wellness Guru - Gain +5 extra energy from self-care");
+        int choice = getValidatedInput("Choose your perk (1-4): ", 1, 4);
+        if (choice == 1) chosenPerk = new AcademicGeniusPerk();
+        else if (choice == 2) chosenPerk = new SocialButterflyPerk();
+        else if (choice == 3) chosenPerk = new HardWorkerPerk();
+        else chosenPerk = new WellnessGuruPerk();
+        System.out.println("You selected: " + chosenPerk.getName());
+        System.out.println(chosenPerk.getDescription());
+    }
+
+    <span class="comment">// English: The main game loop that runs for 7 days.
+    // Chinese: 运行7天的主游戏循环。</span>
+    public void run() {
+        System.out.println("\n=== THE WEEK BEGINS ===");
+        System.out.println("Let's see if you can survive the next 7 days!\n");
+        <span class="comment">// English: A 'for' loop that iterates from day 0 to 6.
+        // Chinese: 一个从第0天迭代到第6天的 'for' 循环。</span>
+        for (int dayNum = 0; dayNum < TOTAL_DAYS; dayNum++) {
+            System.out.println("\n==================== DAY " + (dayNum + 1) + " ====================");
+            System.out.println(player.getStatsString());
+            System.out.println();
+            <span class="comment">// English: Check if the player has crashed due to low energy or happiness.
+            // Chinese: 检查玩家是否因精力或快乐度过低而崩溃。</span>
+            if (player.isExhausted() || player.getHappiness() == 0) {
+                processCrash();
+                player.recordDailyStats(dayNum);
+                if (checkForGameOver(dayNum)) return;
+                continue;
+            }
+            <span class="comment">// English: Let the player select activities for the day.
+            // Chinese: 让玩家选择当天的活动。</span>
+            ArrayList&lt;Event&gt; todaysActivities = selectActivitiesForDay();
+            <span class="comment">// English: Loop through each selected activity.
+            // Chinese: 循环遍历每个选定的活动。</span>
+            for (Event activity : todaysActivities) {
+                performActivity(activity);
+                if (player.isExhausted() || player.getHappiness() == 0) {
+                    System.out.println("\n[!] You've crashed! Forcing rest for remainder of the day...");
+                    processCrash();
+                    break;
+                }
+            }
+            player.recordDailyStats(dayNum);
+            System.out.println("\n--- End of Day " + (dayNum + 1) + " ---");
+            System.out.println(player.getStatsString());
+            if (checkForGameOver(dayNum)) return;
+        }
+        printFinalReport();
+    }
+
+    <span class="comment">// English: Handles the logic for selecting up to 2 activities per day.
+    // Chinese: 处理每天最多选择2个活动的逻辑。</span>
+    private ArrayList&lt;Event&gt; selectActivitiesForDay() {
+        ArrayList&lt;Event&gt; selectedActivities = new ArrayList&lt;Event&gt;();
+        for (int activitySlot = 1; activitySlot &lt;= MAX_ACTIVITIES_PER_DAY; activitySlot++) {
+            System.out.println("\n=== Choose Activity " + activitySlot + " of " + MAX_ACTIVITIES_PER_DAY + " ===");
+            showActivityMenu();
+            int choice = getValidatedInput("Enter your choice (1-9): ", 1, 9);
+            Event chosenActivity = buildEventFromChoice(choice);
+            selectedActivities.add(chosenActivity);
+            System.out.println("You chose: " + chosenActivity.getEventName());
+            if (chosenActivity.getType() == Event.EventType.SKIP) {
+                System.out.println("You're skipping the day. No more activities today.");
+                break;
+            }
+            if (activitySlot == 1) {
+                System.out.print("\nDo you want to do a second activity today? (y/n): ");
+                String response = scanner.nextLine().trim().toLowerCase();
+                if (!response.equals("y") && !response.equals("yes")) break;
+            }
+        }
+        return selectedActivities;
+    }
+
+    <span class="comment">// English: Displays the menu of all possible activities.
+    // Chinese: 显示所有可能活动的菜单。</span>
+    private void showActivityMenu() {
+        System.out.println("STUDY:\n  1. Attend a Uni Class\n  2. All-Nighter Study Grind");
+        System.out.println("WORK:\n  3. Part-time Shift\n  4. Overtime Shift");
+        System.out.println("SOCIAL:\n  5. Hangout with Friends\n  6. Throw a Party");
+        System.out.println("SELF-CARE:\n  7. Netflix Binge / Doom Scroll TikTok\n  8. Gym/Meditation");
+        System.out.println("OTHER:\n  9. Skip the Day (Do Nothing)");
+    }
+
+    <span class="comment">// English: Creates an Event object based on the user's menu choice.
+    // Chinese: 根据用户的菜单选择创建一个 Event 对象。</span>
+    private Event buildEventFromChoice(int choice) {
+        <span class="comment">// English: A 'switch' statement to select code to execute based on the 'choice' variable.
+        // Chinese: 'switch' 语句根据 'choice' 变量的值选择要执行的代码。</span>
+        switch (choice) {
+            case 1: return new ActivityEvents.AttendClassEvent();
+            case 2: return new ActivityEvents.AllNighterEvent();
+            case 3: return new ActivityEvents.PartTimeShiftEvent();
+            case 4: return new ActivityEvents.OvertimeShiftEvent();
+            case 5: return new ActivityEvents.HangoutEvent();
+            case 6: return new ActivityEvents.ThrowPartyEvent();
+            case 7: return new ActivityEvents.NetflixBingeEvent();
+            case 8: return new ActivityEvents.GymMeditationEvent();
+            case 9: return new ActivityEvents.SkipDayEvent();
+        }
+        return null;
+    }
+
+    <span class="comment">// English: Executes a single chosen activity.
+    // Chinese: 执行一个选定的活动。</span>
+    private void performActivity(Event activity) {
+        System.out.println("\n>> Executing: " + activity.getEventName());
+        String mishapText = activity.apply(player, random, gameDifficulty.getMishapMultiplier());
+        if (mishapText != null) {
+            System.out.println("   [MISHAP!] " + mishapText);
+        }
+        if (chosenPerk != null) {
+            chosenPerk.applyBonus(activity.getType(), player);
+        }
+        eventCounts[activity.getType().ordinal()]++;
+        System.out.println("   " + player.getStatsString());
+    }
+
+    <span class="comment">// English: Applies penalties when a player crashes.
+    // Chinese: 在玩家崩溃时施加惩罚。</span>
+    private void processCrash() {
+        System.out.println("\n[!!!] CRASH! You're completely drained and forced to rest.");
+        System.out.println("You spend the day in bed recovering...");
+        player.addEnergy(CRASH_ENERGY_RECOVERY);
+        player.addGrades(CRASH_GRADES_PENALTY);
+        player.addMoney(CRASH_MONEY_PENALTY);
+        if (player.getHappiness() &lt;= 10) {
+            player.addHappiness(5);
+        } else {
+            player.addHappiness(CRASH_HAPPINESS_PENALTY);
+        }
+        player.incrementDaysCrashed();
+    }
+
+    <span class="comment">// English: Checks for all game-over conditions.
+    // Chinese: 检查所有的游戏结束条件。</span>
+    private boolean checkForGameOver(int currentDay) {
+        String gameOverMessage = null;
+        if (player.isBankrupt()) {
+            gameOverMessage = "You went bankrupt and had to drop out.";
+        } else if (player.hasConsecutiveExhaustion(currentDay, EXHAUSTION_DAYS)) {
+            gameOverMessage = "You collapsed from exhaustion and couldn't continue.";
+        } else if (player.hasConsecutiveLowHappiness(currentDay, BURNOUT_DAYS)) {
+            gameOverMessage = "You burned out and couldn't continue.";
+        } else if (player.hasConsecutiveLowGrades(currentDay, ACADEMIC_FAILURE_DAYS)) {
+            gameOverMessage = "You failed your studies and were removed from uni.";
+        }
+        if (gameOverMessage != null) {
+            System.out.println("\n========================================");
+            System.out.println("GAME OVER: " + gameOverMessage);
+            System.out.println("========================================");
+            return true;
+        }
+        return false;
+    }
+
+    <span class="comment">// English: Prints the final summary report after the week is over.
+    // Chinese: 在一周结束后打印最终的总结报告。</span>
+    private void printFinalReport() {
+        System.out.println("\n========================================");
+        System.out.println("      WEEK COMPLETE - FINAL REPORT      ");
+        System.out.println("========================================\n");
+        double finalScore = player.calculateGZSS();
+        System.out.println("Gen-Z Survival Score (GZSS): " + String.format("%.2f", finalScore));
+        System.out.println();
+        String outcomeTitle;
+        String outcomeDescription;
+        if (finalScore >= 80) {
+            outcomeTitle = "THRIVING STUDENT";
+            outcomeDescription = "You crushed it! You found the mythical work-life balance.";
+        } else if (finalScore >= 60) {
+            outcomeTitle = "BALANCED BUT TIRED";
+            outcomeDescription = "You made it through in one piece, but you need a nap.";
+        } else if (finalScore >= 40) {
+            outcomeTitle = "HANGING BY A THREAD";
+            outcomeDescription = "You scraped through, but just barely. Coffee was your best friend.";
+        } else if (finalScore >= 20) {
+            outcomeTitle = "BURNED OUT";
+            outcomeDescription = "The week chewed you up and spat you out.";
+        } else {
+            outcomeTitle = "GEN-Z DISASTER";
+            outcomeDescription = "Rock bottom. Better luck next semester.";
+        }
+        System.out.println("OUTCOME: " + outcomeTitle);
+        System.out.println(outcomeDescription);
+        System.out.println("\n=== FINAL STATS ===");
+        System.out.println(player.getStatsString());
+        System.out.println();
+        int totalActivities = 0;
+        for (int count : eventCounts) totalActivities += count;
+        System.out.println("=== ACTIVITY BREAKDOWN ===");
+        System.out.println("Total Events Attended: " + totalActivities);
+        for (Event.EventType type : Event.EventType.values()) {
+            int count = eventCounts[type.ordinal()];
+            if (count > 0) System.out.println("  " + type + ": " + count);
+        }
+        System.out.println("\n=== DAYS SUMMARY ===");
+        System.out.println("Days Skipped: " + player.getDaysSkipped());
+        System.out.println("Days Crashed: " + player.getDaysCrashed());
+        System.out.println("\n========================================");
+        System.out.println("     Thanks for playing!");
+        System.out.println("========================================");
+    }
+    
+    <span class="comment">// English: A robust helper method to get validated integer input from the user.
+    // Chinese: 一个健壮的辅助方法，用于从用户那里获取经过验证的整数输入。</span>
+    private int getValidatedInput(String prompt, int min, int max) {
+        int userInput = -1;
+        while (true) {
+            try {
+                System.out.print(prompt);
+                String inputLine = scanner.nextLine().trim();
+                userInput = Integer.parseInt(inputLine);
+                if (userInput >= min && userInput <= max) {
+                    return userInput;
+                } else {
+                    System.out.println("Hmm, that's not right. Please pick a number between " + min + " and " + max + ".");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("That's not a valid number! Try again.");
+            }
+        }
+    }
+}
+
+<span class="comment">// =================================================================================
+// English: File 3: Student.java - Represents the player's character and stats.
+// Chinese: 文件三: Student.java - 代表玩家的角色和状态。
+// =================================================================================</span>
+
+class Student {
+    private final String id;
+    private final String name;
+    private int energy;
+    private int money;
+    private int grades;
+    private int happiness;
+    private int[] energyHistory;
+    private int[] gradesHistory;
+    private int[] happinessHistory;
+    private int daysSkipped;
+    private int daysCrashed;
+
+    private static final int STARTING_ENERGY = 50;
+    private static final int STARTING_MONEY = 100;
+    private static final int STARTING_GRADES = 50;
+    private static final int STARTING_HAPPINESS = 50;
+    private static final int SIMULATION_DAYS = 7;
+    private static final int UNHAPPY_THRESHOLD = 30;
+    private static final int FAILING_THRESHOLD = 40;
+    private static final int BROKE_THRESHOLD = -100;
+
+    <span class="comment">// English: The constructor for the Student class, initializes a new Student object.
+    // Chinese: Student 类的构造函数，初始化一个新的 Student 对象。</span>
+    public Student(String name, String id) {
+        this.name = name;
+        this.id = id;
+        this.energy = STARTING_ENERGY;
+        this.money = STARTING_MONEY;
+        this.grades = STARTING_GRADES;
+        this.happiness = STARTING_HAPPINESS;
+        this.energyHistory = new int[SIMULATION_DAYS];
+        this.gradesHistory = new int[SIMULATION_DAYS];
+        this.happinessHistory = new int[SIMULATION_DAYS];
+        this.daysSkipped = 0;
+        this.daysCrashed = 0;
+    }
+
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public int getEnergy() { return energy; }
+    public int getMoney() { return money; }
+    public int getGrades() { return grades; }
+    public int getHappiness() { return happiness; }
+    public int getDaysSkipped() { return daysSkipped; }
+    public int getDaysCrashed() { return daysCrashed; }
+
+    <span class="comment">// English: A public method to add (or subtract) an amount from the student's energy.
+    // Chinese: 一个公共方法，用于在学生的精力上增加（或减少）一个数值。</span>
+    public void addEnergy(int amount) {
+        <span class="comment">// English: 'Math.max(0, ...)' ensures the energy never drops below 0.
+        // Chinese: 'Math.max(0, ...)' 确保精力值永远不会低于0。</span>
+        this.energy = Math.max(0, this.energy + amount);
+    }
+    <span class="comment">// English: A public method to add (or subtract) an amount from the student's money.
+    // Chinese: 一个公共方法，用于在学生的金钱上增加（或减少）一个数值。</span>
+    public void addMoney(int amount) {
+        <span class="comment">// English: 'this.money += amount' is shorthand for 'this.money = this.money + amount'.
+        // Chinese: 'this.money += amount' 是 'this.money = this.money + amount' 的简写。</span>
+        this.money += amount;
+    }
+    <span class="comment">// English: A public method to add (or subtract) an amount from the student's grades.
+    // Chinese: 一个公共方法，用于在学生的成绩上增加（或减少）一个数值。</span>
+    public void addGrades(int amount) {
+        <span class="comment">// English: Ensures grades never drop below 0.
+        // Chinese: 确保成绩永远不会低于0。</span>
+        this.grades = Math.max(0, this.grades + amount);
+    }
+    <span class="comment">// English: A public method to add (or subtract) an amount from the student's happiness.
+    // Chinese: 一个公共方法，用于在学生的快乐度上增加（或减少）一个数值。</span>
+    public void addHappiness(int amount) {
+        <span class="comment">// English: Ensures happiness never drops below 0.
+        // Chinese: 确保快乐度永远不会低于0。</span>
+        this.happiness = Math.max(0, this.happiness + amount);
+    }
+
+    <span class="comment">// English: A public method to save the current day's stats into the history arrays.
+    // Chinese: 一个公共方法，用于将当天的状态保存到历史数组中。</span>
+    public void recordDailyStats(int dayIndex) {
+        <span class="comment">// English: An 'if' statement to prevent an 'ArrayIndexOutOfBoundsException'.
+        // Chinese: 一个 'if' 语句，用于防止'数组越界异常'。</span>
+        if (dayIndex >= 0 && dayIndex < SIMULATION_DAYS) {
+            <span class="comment">// English: Store the current energy at the index corresponding to the current day.
+            // Chinese: 将当前精力值存储在与当前日期对应的索引处。</span>
+            energyHistory[dayIndex] = this.energy;
+            <span class="comment">// English: Store the current grades.
+            // Chinese: 存储当前成绩。</span>
+            gradesHistory[dayIndex] = this.grades;
+            <span class="comment">// English: Store the current happiness.
+            // Chinese: 存储当前快乐度。</span>
+            happinessHistory[dayIndex] = this.happiness;
+        }
+    }
+    <span class="comment">// English: A public method to increment the count of skipped days by one.
+    // Chinese: 一个公共方法，用于将跳过的天数加一。</span>
+    public void incrementDaysSkipped() {
+        <span class="comment">// English: 'this.daysSkipped++' is shorthand for 'this.daysSkipped = this.daysSkipped + 1'.
+        // Chinese: 'this.daysSkipped++' 是 'this.daysSkipped = this.daysSkipped + 1' 的简写。</span>
+        this.daysSkipped++;
+    }
+    <span class="comment">// English: A public method to increment the count of crashed days by one.
+    // Chinese: 一个公共方法，用于将崩溃的天数加一。</span>
+    public void incrementDaysCrashed() {
+        <span class="comment">// English: Increments the 'daysCrashed' counter.
+        // Chinese: 将 'daysCrashed' 计数器加一。</span>
+        this.daysCrashed++;
+    }
+
+    <span class="comment">// English: A public method that returns 'true' if energy is 0, 'false' otherwise.
+    // Chinese: 一个公共方法，如果精力为0则返回 'true'，否则返回 'false'。</span>
+    public boolean isExhausted() { return this.energy == 0; }
+    <span class="comment">// English: A public method that returns 'true' if happiness is at or below the threshold.
+    // Chinese: 一个公共方法，如果快乐度低于或等于阈值则返回 'true'。</span>
+    public boolean isUnhappy() { return this.happiness <= UNHAPPY_THRESHOLD; }
+    <span class="comment">// English: A public method that returns 'true' if grades are at or below the threshold.
+    // Chinese: 一个公共方法，如果成绩低于或等于阈值则返回 'true'。</span>
+    public boolean isFailing() { return this.grades <= FAILING_THRESHOLD; }
+    <span class="comment">// English: A public method that returns 'true' if money is at or below the threshold.
+    // Chinese: 一个公共方法，如果金钱低于或等于阈值则返回 'true'。</span>
+    public boolean isBankrupt() { return this.money <= BROKE_THRESHOLD; }
+
+    <span class="comment">// English: Checks for consecutive days of exhaustion by looking back in the history array.
+    // Chinese: 通过回顾历史数组来检查是否连续多天都处于精疲力竭的状态。</span>
+    public boolean hasConsecutiveExhaustion(int currentDay, int daysRequired) {
+        if (currentDay < daysRequired - 1) return false;
+        for (int i = 0; i < daysRequired; i++) {
+            int checkDay = currentDay - i;
+            if (checkDay < 0 || energyHistory[checkDay] > 0) return false;
+        }
+        return true;
+    }
+    <span class="comment">// English: Checks for consecutive days of low grades.
+    // Chinese: 检查是否连续多天成绩过低。</span>
+    public boolean hasConsecutiveLowGrades(int currentDay, int daysRequired) {
+        if (currentDay < daysRequired - 1) return false;
+        for (int i = 0; i < daysRequired; i++) {
+            int checkDay = currentDay - i;
+            if (checkDay < 0 || gradesHistory[checkDay] > FAILING_THRESHOLD) return false;
+        }
+        return true;
+    }
+    <span class="comment">// English: Checks for consecutive days of low happiness.
+    // Chinese: 检查是否连续多天快乐度过低。</span>
+    public boolean hasConsecutiveLowHappiness(int currentDay, int daysRequired) {
+        if (currentDay < daysRequired - 1) return false;
+        for (int i = 0; i < daysRequired; i++) {
+            int checkDay = currentDay - i;
+            if (checkDay < 0 || happinessHistory[checkDay] > UNHAPPY_THRESHOLD) return false;
+        }
+        return true;
+    }
+
+    <span class="comment">// English: Calculates the final Gen-Z Survival Score by averaging the four main stats.
+    // Chinese: 通过平均四个主要状态值来计算最终的“Z世代生存分数”。</span>
+    public double calculateGZSS() {
+        <span class="comment">// English: Dividing by 4.0 (a double) ensures the result is a double, not an integer.
+        // Chinese: 除以4.0（一个双精度浮点数）确保结果是双精度浮点数，而不是整数。</span>
+        return (energy + money + grades + happiness) / 4.0;
+    }
+    
+    <span class="comment">// English: Returns a nicely formatted string of the current stats for display.
+    // Chinese: 返回一个格式化后的当前状态字符串，用于显示。</span>
+    public String getStatsString() {
+        <span class="comment">// English: 'String.format' creates a formatted string using placeholders (%d for integer, %s for string).
+        // Chinese: 'String.format' 使用占位符（%d 代表整数，%s 代表字符串）来创建一个格式化的字符串。</span>
+        return String.format("Energy: %d | Money: $%d | Grades: %d | Happiness: %d",
+                energy, money, grades, happiness);
+    }
+}
+
+<span class="comment">// =================================================================================
+// English: File 4: Event.java - An abstract base class for all activities.
+// Chinese: 文件四: Event.java - 所有活动的抽象基类。
+// =================================================================================</span>
+
+abstract class Event {
+    public enum EventType { STUDY, WORK, SOCIAL, SELF_CARE, SKIP }
+
+    private final String eventName;
+    private final EventType type;
+
+    public Event(String eventName, EventType type) {
+        this.eventName = eventName;
+        this.type = type;
+    }
+    public String getEventName() { return eventName; }
+    public EventType getType() { return type; }
+
+    <span class="comment">// English: 'abstract' methods must be implemented by any concrete subclass.
+    // Chinese: 'abstract' (抽象) 方法必须由任何具体的子类实现。</span>
+    protected abstract void applyBaseEffects(Student student);
+    protected abstract void applyMishapEffects(Student student);
+    protected abstract double getMishapChance();
+    protected abstract String getMishapMessage();
+
+    <span class="comment">// English: A 'final' method that cannot be overridden by subclasses. It defines a fixed algorithm.
+    // Chinese: 一个'final'方法，不能被子类覆盖。它定义了一个固定的算法。</span>
+    public final String apply(Student student, Random random, double difficultyMultiplier) {
+        applyBaseEffects(student);
+        double adjustedMishapChance = getMishapChance() * difficultyMultiplier;
+        if (random.nextDouble() < adjustedMishapChance) {
+            applyMishapEffects(student);
+            return getMishapMessage();
+        }
+        return null;
+    }
+    @Override
+    public String toString() { return eventName; }
+}
+
+<span class="comment">// =================================================================================
+// English: File 5: ActivityEvents.java - Contains all concrete event implementations.
+// Chinese: 文件五: ActivityEvents.java - 包含所有具体的事件实现。
+// =================================================================================</span>
+
+class ActivityEvents {
+
+    <span class="comment">// English: Defines the 'Attend a Uni Class' event, inheriting from the base Event class.
+    // Chinese: 定义'上大学课程'事件，它继承自基础的Event类。</span>
+    public static class AttendClassEvent extends Event {
+        <span class="comment">// English: Defines a constant for the energy cost of this event.
+        // Chinese: 定义此事件的精力消耗常量。</span>
+        private static final int ENERGY_COST = -10;
+        <span class="comment">// English: Defines a constant for the grade boost.
+        // Chinese: 定义成绩提升的常量。</span>
+        private static final int GRADE_BOOST = 15;
+        <span class="comment">// English: Defines a constant for the money cost (e.g., transport).
+        // Chinese: 定义金钱消耗的常量（例如交通费）。</span>
+        private static final int MONEY_COST = -10;
+        <span class="comment">// English: Defines the base probability of a mishap occurring (10%).
+        // Chinese: 定义意外事件发生的基础概率（10%）。</span>
+        private static final double MISHAP_PROBABILITY = 0.10;
+        <span class="comment">// English: The constructor calls the parent 'Event' class's constructor to set its name and type.
+        // Chinese: 构造函数调用父类'Event'的构造函数来设置其名称和类型。</span>
+        public AttendClassEvent() { super("Attend a Uni Class", EventType.STUDY); }
+        <span class="comment">// English: Overrides the abstract method to define the standard effects of this event.
+        // Chinese: 覆盖抽象方法，以定义此事件的标准效果。</span>
+        @Override
+        protected void applyBaseEffects(Student student) {
+            <span class="comment">// English: Calls the student object's method to change its energy.
+            // Chinese: 调用学生对象的方法来改变其精力值。</span>
+            student.addEnergy(ENERGY_COST);
+            <span class="comment">// English: Calls the student object's method to change its grades.
+            // Chinese: 调用学生对象的方法来改变其成绩。</span>
+            student.addGrades(GRADE_BOOST);
+            <span class="comment">// English: Calls the student object's method to change its money.
+            // Chinese: 调用学生对象的方法来改变其金钱。</span>
+            student.addMoney(MONEY_COST);
+        }
+        <span class="comment">// English: Overrides the abstract method to define what happens if a mishap occurs.
+        // Chinese: 覆盖抽象方法，定义在发生意外时会发生什么。</span>
+        @Override
+        protected void applyMishapEffects(Student student) { <span class="comment">// English: Reverses the grade boost. // Chinese: 撤销成绩提升。</span> student.addGrades(-GRADE_BOOST); }
+        <span class="comment">// English: Overrides the abstract method to return the mishap probability.
+        // Chinese: 覆盖抽象方法，返回意外事件的概率。</span>
+        @Override
+        protected double getMishapChance() { return MISHAP_PROBABILITY; }
+        <span class="comment">// English: Overrides the abstract method to return the mishap message.
+        // Chinese: 覆盖抽象方法，返回意外事件的消息。</span>
+        @Override
+        protected String getMishapMessage() { return "Oh no! You forgot your assignment at home. No grade boost today."; }
+    }
+
+    <span class="comment">// English: Defines the 'All-Nighter' event.
+    // Chinese: 定义'熬夜'事件。</span>
+    public static class AllNighterEvent extends Event {
+        private static final int ENERGY_DRAIN = -40;
+        private static final int GRADE_BOOST = 30;
+        private static final int HAPPINESS_COST = -20;
+        private static final int COLD_ENERGY_PENALTY = -10;
+        private static final double MISHAP_PROBABILITY = 0.05;
+        public AllNighterEvent() { super("All-Nighter Study Grind", EventType.STUDY); }
+        @Override
+        protected void applyBaseEffects(Student student) {
+            student.addEnergy(ENERGY_DRAIN);
+            student.addGrades(GRADE_BOOST);
+            student.addHappiness(HAPPINESS_COST);
+        }
+        @Override
+        protected void applyMishapEffects(Student student) { <span class="comment">// English: Apply an extra energy penalty for getting sick. // Chinese: 因生病施加额外的精力惩罚。</span> student.addEnergy(COLD_ENERGY_PENALTY); }
+        @Override
+        protected double getMishapChance() { return MISHAP_PROBABILITY; }
+        @Override
+        protected String getMishapMessage() { return "Ugh! You caught a cold from the late-night study session."; }
+    }
+
+    <span class="comment">// English: Defines the 'Part-time Shift' event.
+    // Chinese: 定义'兼职工作'事件。</span>
+    public static class PartTimeShiftEvent extends Event {
+        private static final int ENERGY_COST = -20;
+        private static final int EARNINGS = 50;
+        private static final double MISHAP_PROBABILITY = 0.10;
+        public PartTimeShiftEvent() { super("Part-time Shift", EventType.WORK); }
+        @Override
+        protected void applyBaseEffects(Student student) {
+            student.addEnergy(ENERGY_COST);
+            student.addMoney(EARNINGS);
+        }
+        @Override
+        protected void applyMishapEffects(Student student) { <span class="comment">// English: Reverses the money earned. // Chinese: 撤销赚到的钱。</span> student.addMoney(-EARNINGS); }
+        @Override
+        protected double getMishapChance() { return MISHAP_PROBABILITY; }
+        @Override
+        protected String getMishapMessage() { return "Your bicycle tire popped on the way! You missed work and earned nothing."; }
+    }
+
+    <span class="comment">// English: Defines the 'Overtime Shift' event.
+    // Chinese: 定义'加班'事件。</span>
+    public static class OvertimeShiftEvent extends Event {
+        private static final int ENERGY_DRAIN = -35;
+        private static final int EXTRA_PAY = 100;
+        private static final int HAPPINESS_COST = -15;
+        private static final int MISHAP_HAPPINESS_LOSS = -10;
+        private static final double MISHAP_PROBABILITY = 0.05;
+        public OvertimeShiftEvent() { super("Overtime Shift (Extra Work Hours)", EventType.WORK); }
+        @Override
+        protected void applyBaseEffects(Student student) {
+            student.addEnergy(ENERGY_DRAIN);
+            student.addMoney(EXTRA_PAY);
+            student.addHappiness(HAPPINESS_COST);
+        }
+        @Override
+        protected void applyMishapEffects(Student student) { <span class="comment">// English: Apply an extra happiness penalty. // Chinese: 施加额外的快乐度惩罚。</span> student.addHappiness(MISHAP_HAPPINESS_LOSS); }
+        @Override
+        protected double getMishapChance() { return MISHAP_PROBABILITY; }
+        @Override
+        protected String getMishapMessage() { return "Oops! You spilled coffee on a customer. Your boss is not happy."; }
+    }
+
+    <span class="comment">// English: Defines the 'Hangout with Friends' event.
+    // Chinese: 定义'和朋友出去玩'事件。</span>
+    public static class HangoutEvent extends Event {
+        private static final int ENERGY_COST = -20;
+        private static final int HAPPINESS_GAIN = 30;
+        private static final int SPENDING = -30;
+        private static final int LOST_WALLET_PENALTY = -30;
+        private static final double MISHAP_PROBABILITY = 0.05;
+        public HangoutEvent() { super("Hangout with Friends", EventType.SOCIAL); }
+        @Override
+        protected void applyBaseEffects(Student student) {
+            student.addEnergy(ENERGY_COST);
+            student.addHappiness(HAPPINESS_GAIN);
+            student.addMoney(SPENDING);
+        }
+        @Override
+        protected void applyMishapEffects(Student student) { <span class="comment">// English: Apply an extra money penalty for losing the wallet. // Chinese: 因丢失钱包施加额外的金钱惩罚。</span> student.addMoney(LOST_WALLET_PENALTY); }
+        @Override
+        protected double getMishapChance() { return MISHAP_PROBABILITY; }
+        @Override
+        protected String getMishapMessage() { return "Oh no! You lost your wallet during the hangout."; }
+    }
+
+    <span class="comment">// English: Defines the 'Throw a Party' event.
+    // Chinese: 定义'举办派对'事件。</span>
+    public static class ThrowPartyEvent extends Event {
+        private static final int ENERGY_DRAIN = -50;
+        private static final int HAPPINESS_BOOST = 50;
+        private static final int PARTY_COSTS = -100;
+        private static final int HANGOVER_PENALTY = -10;
+        private static final double MISHAP_PROBABILITY = 0.10;
+        public ThrowPartyEvent() { super("Throw a Party", EventType.SOCIAL); }
+        @Override
+        protected void applyBaseEffects(Student student) {
+            student.addEnergy(ENERGY_DRAIN);
+            student.addHappiness(HAPPINESS_BOOST);
+            student.addMoney(PARTY_COSTS);
+        }
+        @Override
+        protected void applyMishapEffects(Student student) { <span class="comment">// English: Apply an energy penalty for the hangover. // Chinese: 因宿醉施加精力惩罚。</span> student.addEnergy(HANGOVER_PENALTY); }
+        @Override
+        protected double getMishapChance() { return MISHAP_PROBABILITY; }
+        @Override
+        protected String getMishapMessage() { return "The party was wild! But now you have a massive hangover."; }
+    }
+
+    <span class="comment">// English: Defines the 'Netflix Binge' event.
+    // Chinese: 定义'刷剧'事件。</span>
+    public static class NetflixBingeEvent extends Event {
+        private static final int GRADES_PENALTY = -25;
+        private static final int HAPPINESS_GAIN = 15;
+        private static final int DOOMSCROLL_PENALTY = -5;
+        private static final double MISHAP_PROBABILITY = 0.10;
+        public NetflixBingeEvent() { super("Netflix Binge / Doom Scroll TikTok", EventType.SELF_CARE); }
+        @Override
+        protected void applyBaseEffects(Student student) {
+            student.addGrades(GRADES_PENALTY);
+            student.addHappiness(HAPPINESS_GAIN);
+        }
+        @Override
+        protected void applyMishapEffects(Student student) { <span class="comment">// English: Apply an extra grades penalty. // Chinese: 施加额外的成绩惩罚。</span> student.addGrades(DOOMSCROLL_PENALTY); }
+        @Override
+        protected double getMishapChance() { return MISHAP_PROBABILITY; }
+        @Override
+        protected String getMishapMessage() { return "You doomscrolled way too long. There goes more study time!"; }
+    }
+
+    <span class="comment">// English: Defines the 'Gym/Meditation' event.
+    // Chinese: 定义'健身/冥想'事件。</span>
+    public static class GymMeditationEvent extends Event {
+        private static final int ENERGY_BOOST = 15;
+        private static final int HAPPINESS_GAIN = 10;
+        private static final double MISHAP_PROBABILITY = 0.05;
+        public GymMeditationEvent() { super("Gym/Meditation", EventType.SELF_CARE); }
+        @Override
+        protected void applyBaseEffects(Student student) {
+            student.addEnergy(ENERGY_BOOST);
+            student.addHappiness(HAPPINESS_GAIN);
+        }
+        @Override
+        protected void applyMishapEffects(Student student) {
+            <span class="comment">// English: Reverse the benefits because the gym was closed.
+            // Chinese: 因为健身房关门了，所以撤销所有增益。</span>
+            student.addEnergy(-ENERGY_BOOST);
+            student.addHappiness(-HAPPINESS_GAIN);
+        }
+        @Override
+        protected double getMishapChance() { return MISHAP_PROBABILITY; }
+        @Override
+        protected String getMishapMessage() { return "The gym is closed and the meditation class was cancelled! Wasted trip."; }
+    }
+
+    <span class="comment">// English: Defines the special 'Skip the Day' event.
+    // Chinese: 定义特殊的'跳过一天'事件。</span>
+    public static class SkipDayEvent extends Event {
+        private static final int REST_ENERGY = 15;
+        private static final int GRADES_DECAY = -15;
+        private static final int HAPPINESS_DECAY = -15;
+        public SkipDayEvent() { super("Skip the Day (Do Nothing)", EventType.SKIP); }
+        @Override
+        protected void applyBaseEffects(Student student) {
+            student.addEnergy(REST_ENERGY);
+            student.addGrades(GRADES_DECAY);
+            student.addHappiness(HAPPINESS_DECAY);
+            student.incrementDaysSkipped();
+        }
+        <span class="comment">// English: This event has no mishaps, so this method is empty.
+        // Chinese: 这个事件没有意外，所以这个方法是空的。</span>
+        @Override
+        protected void applyMishapEffects(Student student) { /* Skip never has mishaps */ }
+        <span class="comment">// English: Returns a 0% chance of a mishap.
+        // Chinese: 返回0%的意外发生概率。</span>
+        @Override
+        protected double getMishapChance() { return 0.0; }
+        <span class="comment">// English: Returns null as there is no mishap message.
+        // Chinese: 因为没有意外消息，所以返回null。</span>
+        @Override
+        protected String getMishapMessage() { return null; }
+    }
+}
+
+</code></pre>
+            </div>
+        </main>
+
+        <footer class="text-center mt-8">
+            <p class="text-slate-500 text-sm">这是一个根据Java控制台应用改编的学习项目。</p>
+        </footer>
+    </div>
+</body>
+</html>
+
